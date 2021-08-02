@@ -21,7 +21,7 @@ const questions = [
     message: "Write a description of your project.",
     name: "description",
     validate: function (answer) {
-      if (answer.lengt < 1) {
+      if (answer.length < 1) {
         return console.log("A valid project description is required.");
       }
       return true;
@@ -98,18 +98,21 @@ function writeToFile(fileName, data) {
     console.log("Success!");
   });
 }
-const writeFileAsync = util.promisify(writeToFIle);
+const writeFileAsync = util.promisify(writeToFile);
 
 // TODO: Create a function to initialize app
-function init() {
-  const userResponse = await inquirer.prompt(questions);
-  console.log("Your Response: ", userResponse);
-  console.log("Retrieving your GitHub data next");
-
-  const userInfo = await api.getUser(userResponse);
-  console.log("GitHub user info: ", userInfo);
-  console.log("Creating your README");
-
+async function init() {
+  try {
+    const userResponses = await inquirer.prompt(questions);
+    console.log("Your responses: ", userResponses);
+    console.log(
+      "Thank you for your responses! Fetching your GitHub data next..."
+    );
+  } finally {
+    userInfo = await api.getUser(userResponses);
+    console.log("GitHub user info: ", userInfo);
+    console.log("Creating your README");
+  }
   const markdown = generateMarkdown(userResponse, userInfo);
   console.log(markdown);
 
